@@ -273,7 +273,6 @@ module Tire
             expected = {
               :settings => {},
               :mappings => { :model_with_custom_mapping => {
-                :_source => { :compress => true },
                 :properties => { :title => { :type => 'string', :analyzer => 'snowball', :boost => 10 } }
               }}
             }
@@ -287,7 +286,7 @@ module Tire
               include Tire::Model::Search
               include Tire::Model::Callbacks
 
-              mapping :_source => { :compress => true } do
+              mapping do
                 indexes :title, :type => 'string', :analyzer => 'snowball', :boost => 10
               end
 
