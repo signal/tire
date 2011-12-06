@@ -1,13 +1,11 @@
 module Tire
-  VERSION   = "0.3.7"
+  VERSION   = "0.3.12"
 
   CHANGELOG =<<-END
     IMPORTANT CHANGES LATELY:
 
-    * Fixed a bug: `Results::Item` was referencing Ruby classes incorrectly within Rails
-    * Added support for the Analyze API (#124)
-    * Added support for adding multiple filters (#122)
-    * Fixed incorrect passing of options in the `date` and `terms` facets
-    * Removed SDoc since it breaks with current RDoc
+    * Loosened dependency specification for Bundler
+    * Do not store `id` and `type` properties in ES _source document
+    * Refactorings
   END
 end

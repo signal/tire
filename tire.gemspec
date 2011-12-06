@@ -26,14 +26,15 @@ Gem::Specification.new do |s|
 
   # = Library dependencies
   #
-  s.add_dependency "rake",        "~> 0.9.2"
+  s.add_dependency "rake"
   s.add_dependency "rest-client", "~> 1.6.0"
   s.add_dependency "multi_json",  "~> 1.0"
   s.add_dependency "activemodel", "~> 3.0"
+  s.add_dependency "hashr",       "~> 0.0.16"
 
   # = Development dependencies
   #
-  s.add_development_dependency "bundler",     "~> 1.0.0"
+  s.add_development_dependency "bundler",     "~> 1.0"
   s.add_development_dependency "yajl-ruby",   "~> 0.8.0"
   s.add_development_dependency "shoulda"
   s.add_development_dependency "mocha"

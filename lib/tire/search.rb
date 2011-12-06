@@ -8,13 +8,11 @@ module Tire
 
       def initialize(indices=nil, options = {}, &block)
         @indices = Array(indices)
+        @types   = Array(options.delete(:type))
         @options = options
-        @type    = @options[:type]
 
-        @url     = Configuration.url+['/', @indices.join(','), @type, '_search'].compact.join('/').squeeze('/')
+        @url     = Configuration.url+['/', @indices.join(','), @types.join(','), '_search'].compact.join('/').squeeze('/')
 
-        # TODO: Do not allow changing the wrapper here or set it back after yield
-        Configuration.wrapper @options[:wrapper] if @options[:wrapper]
         block.arity < 1 ? instance_eval(&block) : block.call(self) if block_given?
       end
 
@@ -71,7 +69,7 @@ module Tire
         @response = Configuration.client.get(@url, self.to_json)
         if @response.failure?
           STDERR.puts "[REQUEST FAILED] #{self.to_curl}\n"
-          raise SearchRequestFailed
+          raise SearchRequestFailed, @response.to_s
         end
         @json     = MultiJson.decode(@response.body)
         @results  = Results::Collection.new(@json, @options)
@@ -107,20 +105,21 @@ module Tire
 
           Configuration.logger.log_request '_search', indices, to_curl
 
-          took = @json['took'] rescue nil
+          took = @json['took']  rescue nil
+          code = @response.code rescue nil
 
           if Configuration.logger.level.to_s == 'debug'
             # FIXME: Depends on RestClient implementation
             body = if @json
               defined?(Yajl) ? Yajl::Encoder.encode(@json, :pretty => true) : MultiJson.encode(@json)
             else
-              @response.body
+              @response.body rescue nil
             end
           else
             body = ''
           end
 
-          Configuration.logger.log_response @response.code, took, body
+          Configuration.logger.log_response code || 'N/A', took || 'N/A', body || 'N/A'
         end
       end
 

@@ -31,6 +31,8 @@ module Tire
         # for the corresponding index, telling _ElasticSearch_ how to understand your documents:
         # what type is which property, whether it is analyzed or no, which analyzer to use, etc.
         #
+        # You may pass the top level mapping properties (such as `_source` or `_all`) as a Hash.
+        #
         # Usage:
         #
         #     class Article
@@ -45,8 +47,8 @@ module Tire
         def mapping(*args)
           @mapping ||= {}
           if block_given?
-            @fields = args.pop
-            @store_mapping = true and yield and @store_mapping = false
+            @mapping_options = args.pop
+            yield
             create_elasticsearch_index
           else
             @mapping
@@ -97,16 +99,12 @@ module Tire
                       "(The original exception was: #{e.inspect})"
         end
 
-        def store_mapping?
-          @store_mapping || false
-        end
-
-        def fields
-          @fields || {}
+        def mapping_options
+          @mapping_options || {}
         end
 
         def mapping_to_hash
-          { document_type.to_sym => fields.merge({ :properties => mapping }) }
+          { document_type.to_sym => mapping_options.merge({ :properties => mapping }) }
         end
 
       end
