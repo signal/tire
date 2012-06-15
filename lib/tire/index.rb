@@ -59,6 +59,13 @@ module Tire
       @response = Configuration.client.post url, document
       MultiJson.decode(@response.body)
 
+    rescue Exception => e
+      if Configuration.logger
+        Configuration.logger.write "ERROR: #{e.message}"
+        Configuration.logger.write "ERROR: Response from Elasticsearch : #{@response.body}" if @response
+      end
+      raise
+
     ensure
       curl = %Q|curl -X POST "#{url}" -d '#{document}'|
       logged([type, id].join('/'), curl)
